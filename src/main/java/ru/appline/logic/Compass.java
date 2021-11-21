@@ -1,30 +1,56 @@
 package ru.appline.logic;
 
-public enum Compass {
-    NORTH(0), EAST(90), SOUTH(180), WEST(270);
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-    private final int degrees;
-    Compass(int degrees) {
-        this.degrees = degrees;
+public class Compass {
+    Map<String, int[]> mapCompas = new HashMap<String, int[]>();
+
+    public Compass(){
+        super();
     }
 
-    public int getDegrees() {
-        return this.degrees;
+    public Compass(Map<String, String> mapCompas){
+        for (Map.Entry<String, String> entry: mapCompas.entrySet()) {
+            this.mapCompas.put(entry.getKey(), dgParser(entry.getValue()));
+        }
     }
 
-    public Compass fromDegrees(int degrees){
-        if (degrees == 0) {
-            return Compass.NORTH;
-        }
-        if (degrees == 90) {
-            return Compass.EAST;
-        }
-        if (degrees == 180) {
-            return Compass.SOUTH;
-        }
-        if (degrees == 270) {
-            return Compass.WEST;
-        }
-        return null;
+    public Map<String, int[]> getMapCompas() {
+        return mapCompas;
     }
+
+    public void setMapCompas(Map<String, String> mapCompas) {
+        for (Map.Entry<String, String> entry: mapCompas.entrySet()) {
+            this.mapCompas.put(entry.getKey(), dgParser(entry.getValue()));
+        }
+    }
+
+
+    public int[] dgParser(String dg){
+        final Pattern pattern = Pattern.compile("-");
+        String[] strings1 = pattern.split(dg);
+        int[] degrees = new int[strings1.length];
+        for (int i = 0; i < strings1.length; i++) {
+            degrees[i] = Integer.parseInt(strings1[i]);
+        }
+        return degrees;
+    }
+
+    public String getSide(int degrees){
+        for (Map.Entry<String, int[]> entry: mapCompas.entrySet()) {
+            if (entry.getValue()[0] > entry.getValue()[1]){
+                if ((degrees >= entry.getValue()[0] && degrees < 360) ||
+                        (degrees <= entry.getValue()[1] && degrees >= 0)){
+                    return entry.getKey();
+                }
+            } else
+            if ((degrees >= entry.getValue()[0]) && (degrees <= entry.getValue()[1])){
+                return entry.getKey();
+            }
+        }
+        return "side not found";
+    }
+
 }
