@@ -6,11 +6,8 @@ import ru.appline.logic.CompassModel;
 import ru.appline.logic.Pet;
 import ru.appline.logic.PetModel;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 public class Controller {
@@ -18,8 +15,7 @@ public class Controller {
     private static final PetModel petModel = PetModel.getInstance();
     private static final AtomicInteger newId = new AtomicInteger(1);
 
-    private static final CompassModel compassModel = CompassModel.getInstance();
-    private static Compass comp = null;
+    private static CompassModel compassModel = CompassModel.getInstance();
     private static final Integer[] dde = new Integer[]{};
 
     @PostMapping(value = "/createPet", consumes = "application/json", produces = "application/json")
@@ -28,15 +24,6 @@ public class Controller {
         if (newId.get() == 2) return "Успешно создан первый питомец";
         else return "Питомец успешно создан";
     }
-
-    @PostMapping(value = "/createSide")
-    public void createSide (@RequestBody Map<String, String> compass) {
-        comp = new Compass(compass);
-//        c.setMapCompas(compass);
-////        compassModel.add(compass, newId.getAndIncrement());
-        System.out.println(comp.getSide(200));
-    }
-
 
 
     @GetMapping(value = "/getAll", produces = "application/json")
@@ -61,10 +48,14 @@ public class Controller {
         return petModel.getFromList(petId);
     }
 
+    @PostMapping(value = "/createSide")
+    public void createSide (@RequestBody Map<String, String> compass) {
+        compassModel.add(compass);
+    }
+
     @GetMapping(value = "/getSide", consumes = "application/json", produces = "application/json")
-    public String getSide(@RequestBody Map<String, Integer> side) {
-        return comp.getSide(side.get("Degree"));
-//        return compassModel.getSide(side.get("Degree"));
+    public Compass getSide(@RequestBody Map<String, Integer> side) {
+        return compassModel.getSide(side.get("Degree"));
     }
 
 
